@@ -1,3 +1,4 @@
+from __future__ import print_function, division
 import numpy as np
 from scipy.optimize import basinhopping
 
@@ -9,6 +10,8 @@ def sigmoid(x, fudge=1e-6):
 
 
 def _softplus(elt, limit=30., fudge=1e-6):
+    """softplus fn w stability. when elt gets large, log(1. + exp(x)) ~= x.
+    we thus sidestep overflow worries for exp(x)"""
     if elt < limit:
         return log(1. + exp(x)) + fudge
     else:
@@ -145,13 +148,12 @@ if __name__ == '__main__':
     yh = fitter.predict(xs)
 
     FIGNAME = 'damp_sin_fitter_example.png'
-    plt.ion()
     fig, ax = plt.subplots(figsize=(6, 4))
     ax.plot(xs, ys_clean, 'k', label='true signal')
     ax.plot(x0, y0, 'ko', label='training data')
     ax.plot(xs, yh, 'r', label='inferred signal')
-    ax.set_title('')
+    ax.set_title('fitted dampening sin wave')
     plt.legend()
-    print('saving fit to {:s}'.format(FIGNAME))
-    plt.savefig(FIGNAME, bbox_inches='tight')
-
+    plt.show()
+    # print('saving fit to {:s}'.format(FIGNAME))
+    # plt.savefig(FIGNAME, bbox_inches='tight')
