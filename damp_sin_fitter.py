@@ -8,8 +8,13 @@ def sigmoid(x, fudge=1e-6):
     return clip(1. / (1. + exp(-x)), fudge, 1.-fudge)
 
 
-def softplus(x, fudge=1e-6):
-    return log(1. + exp(x)) + fudge
+def _softplus(elt, limit=30., fudge=1e-6):
+    if elt < limit:
+        return log(1. + exp(x)) + fudge
+    else:
+        return elt + fudge
+
+softplus = np.vectorize(_softplus)
 
 
 # experimenting with softplus or exp.  softplus normally better for neural approaches,
@@ -139,12 +144,14 @@ if __name__ == '__main__':
     # extract predictions
     yh = fitter.predict(xs)
 
+    FIGNAME = 'damp_sin_fitter_example.png'
     plt.ion()
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(6, 4))
     ax.plot(xs, ys_clean, 'k', label='true signal')
     ax.plot(x0, y0, 'ko', label='training data')
     ax.plot(xs, yh, 'r', label='inferred signal')
+    ax.set_title('')
     plt.legend()
-    plt.show()
-    plt.ioff()
+    print('saving fit to {:s}'.format(FIGNAME))
+    plt.savefig(FIGNAME, bbox_inches='tight')
 
